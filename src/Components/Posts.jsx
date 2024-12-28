@@ -2,79 +2,79 @@ import { useEffect, useState } from "react";
 import { deletePost, getPost } from "../api/PostApi";
 import "../App.css";
 import { Form } from "./Form";
+import PropTypes from "prop-types";
 
-export const Posts = () => { 
+export const Posts = () => {
+  const [data, setData] = useState([]); 
+  const [updateDataApi, setUpdateDataApi] = useState(null);
 
-  const [data, setData] = useState([]);
-  const [updateDataApi, setUpdateDataApi]= useState({});
-
-  const getPostData = async() => {
-    const res =await getPost();
-    console.log(res.data);
-    setData(res.data);
+  const getPostData = async () => {
+    try {
+      const res = await getPost();
+      console.log(res.data);
+      setData(res.data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
   };
 
   useEffect(() => {
     getPostData();
-  },[]);
+  }, []);
 
-  //function to delete Post
   const handleDeletePost = async (id) => {
-    try{
-  const res = await deletePost(id);
-     if (res.status=== 200){
-      const newUpdatedPosts = data.filter( (currPost) => {
-        return currPost.id !== id;
-      } );
-
-      setData(newUpdatedPosts);
-     } else{
-      console.log("Failed to Delete the post:",res.status);
-     }
-    }catch (error){
-      console.log(error);
+    try {
+      const res = await deletePost(id);
+      if (res.status === 200) {
+        const newUpdatedPosts = data.filter((currPost) => currPost.id !== id);
+        setData(newUpdatedPosts);
+      } else {
+        console.log("Failed to delete the post:", res.status);
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
     }
-   
-
   };
 
-  //handleUpdatePost
   const handleUpdatePost = (curElem) => setUpdateDataApi(curElem);
 
-  
-
-  return ( 
+  return (
     <>
-    <section className="section-form ">
-    <Form 
-    data ={data}
-    setData={setData} 
-    updateDataApi={updateDataApi}
-    setUpdateDataApi={setUpdateDataApi}
-    />
-    </section>
-  <section className="section-post">
-    <ol>
-      {
-        data.map((curElem) => {
-          const {id, body, title} = curElem;
-          return(
-            <li key={id}>
-              <p>Title: {title}</p>
-              <p>Body: {body}</p>
-              <button onClick={() => handleUpdatePost()} >Edit</button>
-              <button className="btn-delete" onClick={()=> handleDeletePost(id)} >
-                Delete
+      <section className="section-form">
+        <Form
+          data={data}
+          setData={setData}
+          updateDataApi={updateDataApi}
+          setUpdateDataApi={setUpdateDataApi}
+        />
+      </section>
+      <section className="section-post">
+        <ol>
+          {data.map((curElem) => {
+            const { id, body, title } = curElem;
+            return (
+              <li key={id}>
+                <p>Title: {title}</p>
+                <p>Body: {body}</p>
+                <button onClick={() => handleUpdatePost(curElem)}>Edit</button>
+                <button
+                  className="btn-delete"
+                  onClick={() => handleDeletePost(id)}
+                >
+                  Delete
                 </button>
-
-            </li>
-          )
-
-        })
-      }
-    </ol>
-
-  </section>
-  </>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+    </>
   );
+};
+
+Posts.propTypes = {
+  data: PropTypes.array.isRequired,
+  setData: PropTypes.func.isRequired,
+  updateDataApi: PropTypes.object,
+  setUpdateDataApi: PropTypes.func.isRequired,
 };
