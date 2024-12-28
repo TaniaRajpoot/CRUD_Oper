@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { postData } from "../api/PostApi";
 import PropTypes from "prop-types";
 
-export const Form = ({ data, setData, updateDataApi, setUpdateDataApi }) => {
+export const Form = ({ setData, updateDataApi, setUpdateDataApi }) => {
   const [addData, setAddData] = useState({
     title: "",
     body: "",
@@ -33,7 +33,7 @@ export const Form = ({ data, setData, updateDataApi, setUpdateDataApi }) => {
       console.log("res", res);
 
       if (res.status === 200) {
-        setData([...data, res.data]);
+        setData((prevData) => [...prevData, res.data]);
         setAddData({ title: "", body: "" });
         setUpdateDataApi(null);
       }

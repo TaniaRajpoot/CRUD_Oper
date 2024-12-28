@@ -4,15 +4,14 @@ import "../App.css";
 import { Form } from "./Form";
 import PropTypes from "prop-types";
 
-export const Posts = () => {
-  const [data, setData] = useState([]); 
+export const Posts = ({ data, setData }) => {
   const [updateDataApi, setUpdateDataApi] = useState(null);
 
   const getPostData = async () => {
     try {
       const res = await getPost();
       console.log(res.data);
-      setData(res.data);
+      setData(res.data); // Update data via props
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -75,6 +74,4 @@ export const Posts = () => {
 Posts.propTypes = {
   data: PropTypes.array.isRequired,
   setData: PropTypes.func.isRequired,
-  updateDataApi: PropTypes.object,
-  setUpdateDataApi: PropTypes.func.isRequired,
 };
